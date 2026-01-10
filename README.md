@@ -1,16 +1,17 @@
-# flutter_application_1
+# Flutter Profile App
 
-A new Flutter project.
+A simple Flutter mobile application for a user profile.
 
-## Getting Started
+## Description
 
-This project is a starting point for a Flutter application.
+This app allows you to:
 
-A few resources to get you started if this is your first Flutter project:
+- Display the user's first name, last name, age, and email  
+- Update age and email via text fields  
+- Toggle "Do Not Disturb" status using the icon in the AppBar  
 
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
+Flutter/Dart concepts used:
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+- OOP: classes, private fields, getters and setters, named parameters in constructors  
+- Stateful widgets for updating user information  
+- Basic UI elements: AppBar, Text, TextField, ElevatedButton, IconButton  
