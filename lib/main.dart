@@ -1,15 +1,13 @@
 import 'package:flutter/material.dart';
 
 void main() {
-  // User thisUser = new User(name: 'Iryna', surname: 'Klosheva');
-  User thisUser = new User(name: 'Iryna', surname: 'Klosheva');
-  // User thisUser = new User(
-  //   name: 'Iryna',
-  //   surname: 'Klosheva',
-  //   age: 26,
-  //   email: 'irynaklosheva@gmail.com',
-  //   doNotDisturb: false,
-  // );
+  User thisUser = new User(
+    name: 'Iryna',
+    surname: 'Klosheva',
+    age: 26,
+    email: 'irynaklosheva@gmail.com',
+    doNotDisturb: false,
+  );
 
   runApp(MyApp(user: thisUser));
 }
