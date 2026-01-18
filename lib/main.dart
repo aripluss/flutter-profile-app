@@ -1,22 +1,13 @@
 import 'package:flutter/material.dart';
+import 'models/user.dart';
+import 'models/validator.dart';
 
 void main() {
-  User thisUser = new User(
-    name: 'Iryna',
-    surname: 'Klosheva',
-    age: 26,
-    email: 'irynaklosheva@gmail.com',
-    doNotDisturb: false,
-  );
-
-  runApp(MyApp(user: thisUser));
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
-  final User user;
-
-  const MyApp({super.key, required this.user});
-
+  const MyApp({super.key});
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -26,55 +17,14 @@ class MyApp extends StatelessWidget {
           seedColor: const Color.fromARGB(255, 83, 97, 50),
         ),
       ),
-      home: MyHomePage(title: 'Iryna Klosheva`s profile', user: user),
+      home: MyHomePage(title: 'Iryna Klosheva`s profile'),
     );
   }
 }
 
-class User {
-  String? _name;
-  String? _surname;
-  int? _age;
-  String? _email;
-  bool _doNotDisturb = false;
-
-  User({
-    required String name,
-    String? surname,
-    int? age,
-    String? email,
-    bool doNotDisturb = false,
-  }) {
-    _name = name;
-    _surname = surname;
-    _age = age;
-    _email = email;
-    _doNotDisturb = doNotDisturb;
-  }
-
-  String? get name => _name;
-  String? get surname => _surname;
-  int? get age => _age;
-  String? get email => _email;
-  bool get doNotDisturb => _doNotDisturb;
-
-  void set setAge(int? value) {
-    if (value != null && value > 0 && value < 100) _age = value;
-  }
-
-  void set setEmail(String? value) {
-    if (value != null && value.isNotEmpty) _email = value;
-  }
-
-  void toggleStatus() => _doNotDisturb = !_doNotDisturb;
-}
-
 class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key, required this.title, required this.user});
-
+  const MyHomePage({super.key, required this.title});
   final String title;
-  final User user;
-
   @override
   State<MyHomePage> createState() => _MyHomePageState();
 }
@@ -83,28 +33,56 @@ class _MyHomePageState extends State<MyHomePage> {
   final TextEditingController _ageEntered = TextEditingController();
   final TextEditingController _emailEntered = TextEditingController();
 
+  final User _user = User(
+    name: 'Iryna',
+    surname: 'Klosheva',
+    age: 26,
+    email: 'irynaklosheva@gmail.com',
+    doNotDisturb: false,
+  );
+
   void _updateAge() {
-    setState(() {
-      int? newAge = int.tryParse(_ageEntered.text);
-      if (newAge != null) widget.user.setAge = newAge;
-    });
+    int? newAge = int.tryParse(_ageEntered.text);
+    if (newAge != null && Validator.isValidAge(newAge)) {
+      _user.age = newAge;
+      setState(() {});
+    } else {
+      _showError('Age should be between 1 and 99');
+    }
   }
 
   void _updateEmail() {
-    String newEmail = _emailEntered.text;
-    RegExp emailRegex = RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$');
-
-    if (!emailRegex.hasMatch(newEmail)) return;
-
-    setState(() {
-      widget.user.setEmail = newEmail;
-    });
+    final String newEmail = _emailEntered.text;
+    if (Validator.isValidEmail(newEmail)) {
+      _user.email = newEmail;
+      setState(() {});
+    } else {
+      _showError('Invalid email format');
+    }
   }
 
   void _changeDoNotDisturb() {
     setState(() {
-      widget.user.toggleStatus();
+      _user.toggleStatus();
     });
+  }
+
+  void _showError(String message) {
+    ScaffoldMessenger.of(
+      context,
+    ).showSnackBar(SnackBar(content: Text(message)));
+  }
+
+  Color _iconColor() {
+    return _user.doNotDisturb ? Colors.red : Colors.green;
+  }
+
+  @override
+  void dispose() {
+    // Clean up the controller when the widget is disposed.
+    _ageEntered.dispose();
+    _emailEntered.dispose();
+    super.dispose();
   }
 
   @override
@@ -116,12 +94,12 @@ class _MyHomePageState extends State<MyHomePage> {
           IconButton(
             onPressed: _changeDoNotDisturb,
             icon: Icon(
-              widget.user.doNotDisturb
+              _user.doNotDisturb
                   ? Icons.do_not_disturb_on_outlined
                   : Icons.do_not_disturb_off_outlined,
-              color: widget.user.doNotDisturb ? Colors.red : Colors.green,
+              color: _iconColor(),
             ),
-            tooltip: widget.user.doNotDisturb ? 'Do Not Disturb' : 'Available',
+            tooltip: _user.doNotDisturb ? 'Do Not Disturb' : 'Available',
           ),
         ],
         backgroundColor: const Color.fromARGB(255, 83, 97, 50),
@@ -131,13 +109,11 @@ class _MyHomePageState extends State<MyHomePage> {
         child: Column(
           children: [
             Text(
-              'Hello, ${widget.user.name} ${widget.user.surname}',
+              'Hello, ${_user.name} ${_user.surname}',
               style: TextStyle(fontSize: 18),
             ),
-            Text(
-              'Age: ${widget.user.age != null ? '${widget.user.age} years old' : '-'}',
-            ),
-            Text('Email: ${widget.user.email ?? '-'}'),
+            Text('Age: ${_user.age != null ? '${_user.age} years old' : '-'}'),
+            Text('Email: ${_user.email ?? '-'}'),
 
             SizedBox(height: 100),
 
